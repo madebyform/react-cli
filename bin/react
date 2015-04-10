@@ -21,13 +21,13 @@ program
     var templatePath = path.join(__dirname, '../template');
     var destinationPath = path.join(process.cwd(), name);
 
-    console.log("Creating "+ name );
+    console.log("Creating " + name + "...");
 
     fs.copy(templatePath, destinationPath, function (err) {
       if (err){
         return console.error(err);
       }
-      console.log('success!');
+      console.log('Success!');
     });
 
   });
