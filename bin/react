@@ -11,7 +11,9 @@ var ejs = require('ejs');
 
 // Parse command line options
 
-program.version(pkg.version);
+program
+  .version(pkg.version)
+  .usage("<command> [options]");
 
 program
   .command("new <name>")
@@ -72,4 +74,14 @@ program
     });
   });
 
+// Failsafe that shows the help dialogue if the command is not recognized (`$ react xyz`)
+program.on('*', function(opt) {
+  program.help();
+});
+
 program.parse(process.argv);
+
+// Handle case where no command is passed (`$ react`)
+if (!process.argv.slice(2).length) {
+  program.help();
+}
