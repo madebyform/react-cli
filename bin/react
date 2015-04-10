@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+'use strict';
+
+process.bin = process.title = 'react';
+
+var program = require('commander');
+var pkg = require('../package.json');
+var fs = require('fs-extra');
+var path = require('path');
+var ejs = require('ejs');
+
+// parse options
+
+
+// Parse command line options
+
+program.version(pkg.version);
+
+
+program
+  .command("new <name>")
+  .description("Generate a new react app boilerplate.")
+  .action(function(name, options) {
+
+    var templatePath = path.join(path.dirname(process.argv[1]), '../template');
+    var destinationPath = path.join(process.cwd(), name);
+
+    console.log("Creating "+ name );
+
+    fs.copy(templatePath, destinationPath, function (err) {
+      if (err){
+        return console.error(err);
+      }
+      console.log('success!');
+    });
+
+  });
+
+program
+  .command("generate <name> [propName:PropType...]")
+  .option("-l, --skip-lifecycle", "Skip lifecycle method generation")
+  .description("Generate a new react component.")
+  .action(function(name, propDefs) {
+    var props = [];
+    var possibleTypes = {
+      "any": "React.PropTypes.any",
+      "requiredAny": "React.PropTypes.any.isRequired",
+      "func": "React.PropTypes.func",
+      "requiredFunc": "React.PropTypes.func.isRequired",
+      "array": "React.PropTypes.array",
+      "requiredArray": "React.PropTypes.array.isRequired",
+      "bool": "React.PropTypes.bool",
+      "requiredBool": "React.PropTypes.bool.isRequired",
+      "number": "React.PropTypes.number",
+      "requiredNumber": "React.PropTypes.number.isRequired",
+      "object": "React.PropTypes.object",
+      "requiredObject": "React.PropTypes.object.isRequired",
+      "string": "React.PropTypes.string",
+      "requiredString": "React.PropTypes.string.isRequired",
+    };
+    propDefs.forEach(function(propDef) {
+      var nameType = propDef.split(":");
+      props.push({
+        name: nameType[0],
+        type: possibleTypes[nameType[1]]
+      });
+    });
+    var lifecycle = !this.skipLifecycle;
+    fs.readFile(path.join(path.dirname(process.argv[1]), "../templates", "component.ejs"), 'utf8', function (err, data) {
+      var component = ejs.render(data, {
+        lifecycle: lifecycle,
+        name: name,
+        props: props
+      });
+      fs.writeFile(path.join(process.cwd(), "src/components", name.toLowerCase()+".jsx"), component);
+    });
+  });
+
+program.parse(process.argv);

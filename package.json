@@ -1,0 +1,22 @@
+{
+  "name": "react-cli",
+  "version": "0.0.1",
+  "description": "A command line interface to generate a new react app.",
+  "author": "Made by Form",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/madebyform/react-cli/blob/master/LICENSE"
+    }
+  ],
+  "dependencies": {
+    "commander": "^2.7.1",
+    "fs-extra": "^0.18.0",
+    "ejs": "^2.3.1"
+  },
+  "repository": "madebyform/react-cli",
+  "bin": {
+    "react": "bin/react"
+  },
+  "preferGlobal": true
+}
