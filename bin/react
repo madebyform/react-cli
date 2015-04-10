@@ -9,20 +9,16 @@ var fs = require('fs-extra');
 var path = require('path');
 var ejs = require('ejs');
 
-// parse options
-
-
 // Parse command line options
 
 program.version(pkg.version);
-
 
 program
   .command("new <name>")
   .description("Generate a new react app boilerplate.")
   .action(function(name, options) {
 
-    var templatePath = path.join(path.dirname(process.argv[1]), '../template');
+    var templatePath = path.join(__dirname, '../template');
     var destinationPath = path.join(process.cwd(), name);
 
     console.log("Creating "+ name );
@@ -66,7 +62,7 @@ program
       });
     });
     var lifecycle = !this.skipLifecycle;
-    fs.readFile(path.join(path.dirname(process.argv[1]), "../templates", "component.ejs"), 'utf8', function (err, data) {
+    fs.readFile(path.join(__dirname, "../templates", "component.ejs"), 'utf8', function (err, data) {
       var component = ejs.render(data, {
         lifecycle: lifecycle,
         name: name,
