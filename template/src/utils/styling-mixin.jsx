@@ -1,5 +1,4 @@
 /*jshint esnext:true, browserify:true */
-/*globals components */
 'use strict';
 
 /*

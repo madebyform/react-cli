@@ -36,7 +36,6 @@ server.set('view engine', 'ejs');
 // This is necessary because we'll do `App()` instead of <App />
 var routes = require("./src/app.jsx").routes;
 
-// Redirect the user to the list of native components for iOS
 server.get('/', function(req, res) {
   Router.run(routes, req.url, function (handler, state) {
     // Render the app and send the markup for faster page loads and SEO
