@@ -21,13 +21,13 @@ var assets = {
 
 // Enable browser cache and HTTP caching (cache busting, etc.)
 server.use(cachify.setup(assets, {
-  root: "../assets",
+  root: "assets",
   production: (process.env.NODE_ENV != "development")
 }));
 
 // Serve static files
 // TODO: remember to put the favicon and other relevant stuff there.
-server.use('/', express.static('../assets'));
+server.use('/', express.static('assets'));
 
 // Use Embedded JavaScript to embed the output from React into our layout
 server.set('view engine', 'ejs');
