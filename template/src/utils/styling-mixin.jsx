@@ -1,4 +1,5 @@
 /*jshint esnext:true, browserify:true */
+/*globals components */
 'use strict';
 
 /*
@@ -21,7 +22,7 @@ let StylingMixin = {
   // arbitrary number of given objects. Useful for conditionals. Usage example:
   //    this.mergeStyles(
   //      styles.example,
-  //      isOpen && styles.open
+  //      this.props.isOpen && styles.open
   //    )
   //
   mergeStyles(...args) {

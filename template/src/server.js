@@ -21,21 +21,23 @@ var assets = {
 
 // Enable browser cache and HTTP caching (cache busting, etc.)
 server.use(cachify.setup(assets, {
-  root: "assets",
+  root: "../assets",
   production: (process.env.NODE_ENV != "development")
 }));
 
 // Serve static files
 // TODO: remember to put the favicon and other relevant stuff there.
-server.use('/', express.static('assets'));
+server.use('/', express.static('../assets'));
 
 // Use Embedded JavaScript to embed the output from React into our layout
 server.set('view engine', 'ejs');
+server.set('views', 'src/views');
 
 // Require and wrap the React main component in a factory before calling it
 // This is necessary because we'll do `App()` instead of <App />
-var routes = require("./src/app.jsx").routes;
+var routes = require("./app.jsx").routes;
 
+// Redirect the user to the list of native components for iOS
 server.get('/', function(req, res) {
   Router.run(routes, req.url, function (handler, state) {
     // Render the app and send the markup for faster page loads and SEO
@@ -51,7 +53,7 @@ server.get('/', function(req, res) {
     var output = React.renderToString(content);
 
     res.render('template', {
-      output: output,
+      output: output
 
       // TODO: pass any additional initial state data here
     });

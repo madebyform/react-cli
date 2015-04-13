@@ -32,7 +32,7 @@
   <div id="container"><%- output %></div>
 
   <script>/*
-    here you can set any initial state globals like window.initStateVar = <%- JSON.stringify(initStateVar) %>;
+    here you can set any initial state globals like window.initStateVar = <%# JSON.stringify(initStateVar) %>;
     Assuming you calling the render('template' on server.js with the correct initStateVar.
   */</script>
   <%- cachify_js("/app.min.js") %>
