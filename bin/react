@@ -37,6 +37,7 @@ program
 program
   .command("generate <name> [propName:PropType...]")
   .option("-l, --skip-lifecycle", "Skip lifecycle method generation")
+  .option("-j, --js", "Generate JS file")
   .description("Generate a new react component.")
   .action(function(name, propDefs) {
     var props = [];
@@ -64,13 +65,14 @@ program
       });
     });
     var lifecycle = !this.skipLifecycle;
+    var extension = !this.js ? '.jsx' : '.js';
     fs.readFile(path.join(__dirname, "../templates", "component.ejs"), 'utf8', function (err, data) {
       var component = ejs.render(data, {
         lifecycle: lifecycle,
         name: name,
         props: props
       });
-      fs.writeFile(path.join(process.cwd(), "src/components", name.toLowerCase()+".jsx"), component);
+      fs.writeFile(path.join(process.cwd(), "src/components", name.toLowerCase()+extension), component);
     });
   });
 
