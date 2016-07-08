@@ -48,6 +48,10 @@ This creates a skeleton `mycomponent.jsx` file inside your `src/components` dire
 
 By default, the resulting file includes React lifecycle methods, like `componentWillMount`. You can skip these by passing in either `-l` or `--skip-lifecycle` to the command above. To know more run `$ react generate -h`.
 
+#### Component file extension
+
+By default, the resulting file will be of `.jsx` extension. You can specify `.js` by passing in either `-j` or `--js` to the command above.
+
 #### Property Types
 
 Currently supported property types:
