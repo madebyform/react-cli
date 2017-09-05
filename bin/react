@@ -70,7 +70,7 @@ program
         name: name,
         props: props
       });
-      fs.writeFile(path.join(process.cwd(), "src/"+name.toLowerCase()+"/components", name.toLowerCase()+".jsx"), component);
+      fs.writeFile(path.join(process.cwd(), "src/routes/"+name.toLowerCase()+"/components", name.toLowerCase()+".jsx"), component);
     });
   });
 
