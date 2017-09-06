@@ -9,6 +9,35 @@ var fs = require('fs-extra');
 var path = require('path');
 var ejs = require('ejs');
 
+/**
+ * @methd mkdir
+ * @desc 递归生成文件目录
+ */
+// 使用时第二个参数可以忽略
+function mkdir(dirpath, dirname) {
+  //判断是否是第一次调用
+  if (typeof dirname === 'undefined') {
+    if (fs.existsSync(dirpath)) {
+      
+    } else {
+      mkdir(dirpath, path.dirname(dirpath))
+    }
+  } else {
+    //判断第二个参数是否正常，避免调用时传入错误参数
+    if (dirname !== path.dirname(dirpath)) {
+      mkdir(dirpath)
+      return
+    }
+    if (fs.existsSync(dirname)) {
+      fs.mkdirSync(dirpath)
+    } else {
+      mkdir(dirname, path.dirname(dirname))
+      fs.mkdirSync(dirpath)
+    }
+  }
+}
+
+
 // Parse command line options
 
 program
@@ -70,7 +99,18 @@ program
         name: name,
         props: props
       });
-      fs.writeFile(path.join(process.cwd(), "src/routes/"+name.toLowerCase()+"/components", name.toLowerCase()+".jsx"), component);
+      /**
+       * 创建模版文件？
+       * fs.writeFile(path.join(process.cwd(), <文件路径>, <文件名称>), <模版文件>);
+       * 样板代码：
+       * fs.writeFile(path.join(process.cwd(), "src/components", name+".jsx"), component);
+       * 这样会在src/components目录下按照component模版生成指定名称的jsx文件
+       *
+       * 如何生成指定路径内缺少的文件夹？
+       * 调用自定义mkdir方法
+       * 样板代码：
+       * mkdir('src/', 'components')
+       */
     });
   });
 
