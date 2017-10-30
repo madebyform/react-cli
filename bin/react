@@ -1,29 +1,26 @@
+
 #!/usr/bin/env node
-'use strict';
-
-process.bin = process.title = 'react';
-
-var program = require('commander');
-var pkg = require('../package.json');
-var fs = require('fs-extra');
-var path = require('path');
-var ejs = require('ejs');
-
+'use strict'
+process.bin = process.title = 'react'
+var program = require('commander')
+var pkg = require('../package.json')
+var fs = require('fs-extra')
+var path = require('path')
+var ejs = require('ejs')
 /**
  * @methd mkdir
  * @desc 递归生成文件目录
  */
 // 使用时第二个参数可以忽略
-function mkdir(dirpath, dirname) {
-  //判断是否是第一次调用
+function mkdir (dirpath, dirname) {
+  // 判断是否是第一次调用
   if (typeof dirname === 'undefined') {
     if (fs.existsSync(dirpath)) {
-      
     } else {
       mkdir(dirpath, path.dirname(dirpath))
     }
   } else {
-    //判断第二个参数是否正常，避免调用时传入错误参数
+    // 判断第二个参数是否正常，避免调用时传入错误参数
     if (dirname !== path.dirname(dirpath)) {
       mkdir(dirpath)
       return
@@ -36,92 +33,110 @@ function mkdir(dirpath, dirname) {
     }
   }
 }
-
-
 // Parse command line options
-
+program.version(pkg.version).usage('<command> [options]')
 program
-  .version(pkg.version)
-  .usage("<command> [options]");
-
-program
-  .command("new <name>")
-  .description("Generate a new react app boilerplate.")
-  .action(function(name, options) {
-
-    var templatePath = path.join(__dirname, '../template');
-    var destinationPath = path.join(process.cwd(), name);
-
-    console.log("Creating " + name + "...");
-
+  .command('new <name>')
+  .description('Generate a new react app boilerplate.')
+  .action(function (name, options) {
+    var templatePath = path.join(__dirname, '../template')
+    var destinationPath = path.join(process.cwd(), name)
+    console.log('Creating ' + name + '...')
     fs.copy(templatePath, destinationPath, function (err) {
-      if (err){
-        return console.error(err);
+      if (err) {
+        return console.error(err)
       }
-      console.log('Success!');
-    });
-
-  });
-
+      console.log('Success!')
+    })
+  })
 program
-  .command("generate <name> [propName:PropType...]")
-  .option("-l, --skip-lifecycle", "Skip lifecycle method generation")
-  .description("Generate a new react component.")
-  .action(function(name, propDefs) {
-    var props = [];
+  .command('generate <name> [propName:PropType...]')
+  .option('-l, --skip-lifecycle', 'Skip lifecycle method generation')
+  .description('Generate a new react component.')
+  .action(function (name, propDefs) {
+    var props = []
     var possibleTypes = {
-      "any": "React.PropTypes.any",
-      "requiredAny": "React.PropTypes.any.isRequired",
-      "func": "React.PropTypes.func",
-      "requiredFunc": "React.PropTypes.func.isRequired",
-      "array": "React.PropTypes.array",
-      "requiredArray": "React.PropTypes.array.isRequired",
-      "bool": "React.PropTypes.bool",
-      "requiredBool": "React.PropTypes.bool.isRequired",
-      "number": "React.PropTypes.number",
-      "requiredNumber": "React.PropTypes.number.isRequired",
-      "object": "React.PropTypes.object",
-      "requiredObject": "React.PropTypes.object.isRequired",
-      "string": "React.PropTypes.string",
-      "requiredString": "React.PropTypes.string.isRequired",
-    };
-    propDefs.forEach(function(propDef) {
-      var nameType = propDef.split(":");
+      any: 'React.PropTypes.any',
+      requiredAny: 'React.PropTypes.any.isRequired',
+      func: 'React.PropTypes.func',
+      requiredFunc: 'React.PropTypes.func.isRequired',
+      array: 'React.PropTypes.array',
+      requiredArray: 'React.PropTypes.array.isRequired',
+      bool: 'React.PropTypes.bool',
+      requiredBool: 'React.PropTypes.bool.isRequired',
+      number: 'React.PropTypes.number',
+      requiredNumber: 'React.PropTypes.number.isRequired',
+      object: 'React.PropTypes.object',
+      requiredObject: 'React.PropTypes.object.isRequired',
+      string: 'React.PropTypes.string',
+      requiredString: 'React.PropTypes.string.isRequired',
+    }
+    propDefs.forEach(function (propDef) {
+      var nameType = propDef.split(':')
       props.push({
         name: nameType[0],
-        type: possibleTypes[nameType[1]]
-      });
-    });
-    var lifecycle = !this.skipLifecycle;
-    fs.readFile(path.join(__dirname, "../templates", "component.ejs"), 'utf8', function (err, data) {
+        type: possibleTypes[nameType[1]],
+      })
+    })
+    var lifecycle = !this.skipLifecycle
+    /**
+     * 创建模版文件？
+     * fs.writeFile(path.join(process.cwd(), <文件路径>, <文件名称>), <模版文件>);
+     * 样板代码：
+     * fs.writeFile(path.join(process.cwd(), "src/components", name+".jsx"), component);
+     * 这样会在src/components目录下按照component模版生成指定名称的jsx文件
+     *
+     * 如何生成指定路径内缺少的文件夹？
+     * 调用自定义mkdir方法
+     * 样板代码：
+     * mkdir('src/', 'components')
+     */
+    fs.readFile(path.join(__dirname, '../templates', 'component.ejs'), 'utf8', function (err, data) {
       var component = ejs.render(data, {
         lifecycle: lifecycle,
         name: name,
-        props: props
-      });
-      /**
-       * 创建模版文件？
-       * fs.writeFile(path.join(process.cwd(), <文件路径>, <文件名称>), <模版文件>);
-       * 样板代码：
-       * fs.writeFile(path.join(process.cwd(), "src/components", name+".jsx"), component);
-       * 这样会在src/components目录下按照component模版生成指定名称的jsx文件
-       *
-       * 如何生成指定路径内缺少的文件夹？
-       * 调用自定义mkdir方法
-       * 样板代码：
-       * mkdir('src/', 'components')
-       */
-    });
-  });
-
+        props: props,
+      })
+      const filePath = 'src/routes/' + name + '/components'
+      mkdir(filePath)
+      fs.writeFile(path.join(process.cwd(), filePath, name + '.jsx'), component)
+    })
+    fs.readFile(path.join(__dirname, '../templates', 'container.ejs'), 'utf8', function (err, data) {
+      var component = ejs.render(data, {
+        lifecycle: lifecycle,
+        name: name,
+        props: props,
+      })
+      const filePath = 'src/routes/' + name + '/containers'
+      mkdir(filePath)
+      fs.writeFile(path.join(process.cwd(), filePath, name + 'Container.js'), component)
+    })
+    fs.readFile(path.join(__dirname, '../templates', 'reducer.ejs'), 'utf8', function (err, data) {
+      var component = ejs.render(data, {
+        lifecycle: lifecycle,
+        name: name,
+        props: props,
+      })
+      const filePath = 'src/routes/' + name + '/modules'
+      mkdir(filePath)
+      fs.writeFile(path.join(process.cwd(), filePath, name.toLowerCase() + '.js'), component)
+    })
+    fs.readFile(path.join(__dirname, '../templates', 'index.ejs'), 'utf8', function (err, data) {
+      var component = ejs.render(data, {
+        lifecycle: lifecycle,
+        name: name,
+        props: props,
+      })
+      const filePath = 'src/routes/' + name
+      fs.writeFile(path.join(process.cwd(), filePath, 'index.js'), component)
+    })
+  })
 // Failsafe that shows the help dialogue if the command is not recognized (`$ react xyz`)
-program.on('*', function(opt) {
-  program.help();
-});
-
-program.parse(process.argv);
-
+program.on('*', function (opt) {
+  program.help()
+})
+program.parse(process.argv)
 // Handle case where no command is passed (`$ react`)
 if (!process.argv.slice(2).length) {
-  program.help();
+  program.help()
 }
